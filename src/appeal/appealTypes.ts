@@ -7,7 +7,8 @@ export enum Category {
 
 export enum Campaign {
   SaveGaza = "Save Gaza",
-  FloodRelief = "Flood Relief"
+  FloodRelief = "Flood Relief",
+  IslamicPreaching = "Islamic Preaching",
 }
 
 export interface Appeal {
@@ -17,9 +18,10 @@ export interface Appeal {
   targeted_amount: number;
   collected_amount: number;
   category: Category;
-  campaign: string;
+  campaign: Campaign;
   start_date: Date;
   end_date: Date;
   image: string;
   author: Types.ObjectId;
+  total_supporters: number;
 }

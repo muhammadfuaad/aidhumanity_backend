@@ -152,12 +152,13 @@ const getSingleAppeal = async (
   response: Response,
   next: NextFunction
 ) => {
+  console.log('request:', request);
   console.log("request.params:", request.params);
   const { appealId } = request.params;
   console.log("appealId:", appealId);
 
   try {
-    const appeal = await appealModel.find({ _id: appealId });
+    const appeal = await appealModel.findOne({ _id: appealId });
     console.log("appeal:", appeal);
 
     if (!appeal) {

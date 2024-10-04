@@ -8,9 +8,9 @@ const appealSchema = new mongoose.Schema<Appeal>(
       required: true,
     },
     author: {
-      type: mongoose.Schema.Types.ObjectId, // Reference to the ObjectId of User
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      // required: true,
     },
     description: {
       type: String,
@@ -38,14 +38,15 @@ const appealSchema = new mongoose.Schema<Appeal>(
     },
     category: {
       type: String,
-      enum: Object.values(Category), // Use enum with possible values
+      enum: Object.values(Category),
       // required: true,
     },
     campaign: {
       type: String,
-      enum: Object.values(Campaign), // Use enum with possible values
+      enum: Object.values(Campaign),
       // required: true,
     },
+    total_supporters: Number
   },
   { timestamps: true }
 );
