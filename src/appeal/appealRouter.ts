@@ -1,5 +1,5 @@
 import express from 'express'
-import { allAppeals, createAppeal, deleteAppeal, updateAppeal, getSingleAppeal } from './appealController';
+import { allAppeals, allCampaigns, createAppeal, deleteAppeal, updateAppeal, getSingleAppeal } from './appealController';
 import multer from 'multer';
 import path from 'node:path'
 import authenticate from '../middlewares/authenticate';
@@ -30,6 +30,7 @@ appealRouter.post('/', authenticate, upload.fields([{name: 'appealImage', maxCou
 appealRouter.delete('/delete/:id', authenticate, deleteAppeal)
 appealRouter.put('/update/:id', authenticate, upload.fields([{name: 'appealImage', maxCount: 3}]), updateAppeal)
 appealRouter.get('/', allAppeals)
+appealRouter.get('/campaigns', allCampaigns)
 appealRouter.get('/:appealId', getSingleAppeal)
 
 export default appealRouter;

@@ -58,8 +58,14 @@ export const loginUser = async (request: Request, response: Response, next: Next
     return next(error)
   }
   let user
+  let userId
   try {
     user = await userModel.findOne({email})
+    console.log('user:', user);
+    console.log('user?._id:', user?._id);
+
+    // userId = await userModel.findOne({email})._id
+
     if (!user) {
       const error = createHttpError(404, 'User not found')
       return next(error)
@@ -82,7 +88,9 @@ export const loginUser = async (request: Request, response: Response, next: Next
     });
     return response.status(200).json({ 
       message: "Welcome Back",
-      accessToken: token 
+      accessToken: token,
+      // userId: userId
+      userId: user._id
     });
   } catch (error) {
     console.log("token generation error:", error);

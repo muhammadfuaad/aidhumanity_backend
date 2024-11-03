@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { Appeal, Campaign, Category } from './appealTypes'
+import { Appeal, Campaign, CampaignImage, Category } from './appealTypes'
 
 const appealSchema = new mongoose.Schema<Appeal>(
   {
@@ -44,6 +44,11 @@ const appealSchema = new mongoose.Schema<Appeal>(
     campaign: {
       type: String,
       enum: Object.values(Campaign),
+      // required: true,
+    },
+    campaignImage: {
+      type: String,
+      enum: Object.values(CampaignImage),
       // required: true,
     },
     total_supporters: Number

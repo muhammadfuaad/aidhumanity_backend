@@ -3,6 +3,7 @@ import appealModel from "./appealModel";
 import createHttpError from "http-errors";
 import { AuthRequest } from "../middlewares/authenticate";
 import cloudinaryUpload from "../utils/cloudinaryUpload";
+import { request } from "node:http";
 
 const createAppeal = async (request: Request, response: Response) => {
   try {
@@ -138,6 +139,17 @@ const allAppeals = async (request: Request, response: Response) => {
   });
 };
 
+const allCampaigns = async (request: Request, response: Response) => {
+  const appeals = await appealModel.find();
+  console.log("appeals:", appeals);
+  const campaigns = [...new Set(appeals.map((item) => item.campaign))];
+  response.json({
+    message: "Campaigns fetched successfully",
+    data: campaigns,
+  });
+};
+
+
 const userAppeals = async (request: Request, response: Response) => {
   const appeals = await appealModel.find();
   console.log("appeals:", appeals);
@@ -174,11 +186,13 @@ const getSingleAppeal = async (
     return next(createHttpError(500, "Error while getting appeal"));
   }
 };
+
 export {
   createAppeal,
   deleteAppeal,
   updateAppeal,
   allAppeals,
+  allCampaigns,
   getSingleAppeal,
   userAppeals
 };
