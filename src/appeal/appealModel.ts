@@ -14,19 +14,19 @@ const appealSchema = new mongoose.Schema<Appeal>(
     },
     description: {
       type: String,
-      required: true,
+      // required: true,
     },
     targeted_amount: {
       type: Number,
-      required: true,
+      // required: true,
     },
     collected_amount: {
       type: Number,
-      required: true,
+      // required: true,
     },
     image: {
       type: String,
-      required: true,
+      // required: true,
     },
     start_date: {
       type: Date,

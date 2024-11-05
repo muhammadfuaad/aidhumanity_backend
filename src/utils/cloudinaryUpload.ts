@@ -9,25 +9,25 @@ const cloudinaryUpload = async (files) => {
   //   [fieldName: string]: Express.Multer.File[];
   // };
 
-  const productImageMimeType = files.productImage[0].mimetype.split("/").at(-1);
-  const fileName = files.productImage[0].filename;
+  const imageMimeType = files.image[0].mimetype.split("/").at(-1);
+  const fileName = files.image[0].filename;
   const filePath = path.resolve(
     __dirname,
     "../../public/data/uploads",
     fileName
   );
 
-  console.log("fileName:", fileName);
-  console.log("mimeType:", productImageMimeType);
-  console.log("files:", files);
+  // console.log("fileName:", fileName);
+  // console.log("mimeType:", imageMimeType);
+  // console.log("files:", files);
 
   // Upload the file to Cloudinary
   const uploadResult = await cloudinary.uploader.upload(filePath, {
     filename_override: fileName,
     folder: "book-covers",
-    format: productImageMimeType,
+    format: imageMimeType,
   });
-  console.log("uploadResult:", uploadResult);
+  // console.log("uploadResult:", uploadResult);
 
   try {
     await fs.promises.unlink(filePath);

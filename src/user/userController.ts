@@ -51,6 +51,7 @@ export const createUser = async (request: Request, response: Response, next: Nex
 export const loginUser = async (request: Request, response: Response, next: NextFunction)=>{
   // response.json({message: 'User registered successfully'})
   const {email, password} = request.body
+  console.log('request.body:', request.body);
   console.log('password:', password);
 
   if (!email || !password) {

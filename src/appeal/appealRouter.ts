@@ -26,7 +26,7 @@ const upload = multer({
   limits: {fileSize: 3e7}
 })
 
-appealRouter.post('/', authenticate, upload.fields([{name: 'appealImage', maxCount: 3}]), createAppeal)
+appealRouter.post('/create_appeal', authenticate, upload.fields([{name: 'image', maxCount: 3}]), createAppeal)
 appealRouter.delete('/delete/:id', authenticate, deleteAppeal)
 appealRouter.put('/update/:id', authenticate, upload.fields([{name: 'appealImage', maxCount: 3}]), updateAppeal)
 appealRouter.get('/', allAppeals)

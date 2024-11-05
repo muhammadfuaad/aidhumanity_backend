@@ -3,14 +3,24 @@ import appealModel from "./appealModel";
 import createHttpError from "http-errors";
 import { AuthRequest } from "../middlewares/authenticate";
 import cloudinaryUpload from "../utils/cloudinaryUpload";
-import { request } from "node:http";
+import { CampaignImage } from "./appealTypes";
+import { Campaign } from "./appealTypes";
+// import { request } from "node:http";
 
 const createAppeal = async (request: Request, response: Response) => {
+  console.log('campaign enum values:', Object.values(Campaign));
+  console.log('campaign enum keys:', Object.keys(Campaign));
   try {
-    const { name, price, stock } = request.body;
+    const { title, description, targeted_amount, collected_amount, start_date, end_date, category, campaign,
+      total_supporters } = request.body;
     // Log the request body and files to debug
     console.log("Request body:", request.body);
     console.log("Request files:", request.files);
+    const campaignValue = Campaign[campaign as keyof typeof Campaign];
+    const campaignImageValue = CampaignImage[campaign as keyof typeof CampaignImage];
+    if (!campaignValue || !campaignImageValue) {
+      return response.status(400).json({ message: "Invalid campaign key" });
+    }
 
     const secure_url = cloudinaryUpload(request.files);
 
@@ -20,11 +30,8 @@ const createAppeal = async (request: Request, response: Response) => {
     // If you want to create the appeal after the image is uploaded:
     // const { name, price, stock } = request.body;
     const newAppeal = await appealModel.create({
-      name,
-      price,
-      stock,
-      owner: _request.userId,
-      appealImage: (await secure_url) as string,
+      title, author: _request.userId, description, targeted_amount, collected_amount, image: (await secure_url) as string, 
+      start_date, end_date, category, campaign: campaignValue, campaignImage: campaignImageValue, total_supporters
     });
 
     response.status(201).json({
@@ -105,8 +112,6 @@ const updateAppeal = async (
       updateAttributes = { ...updateAttributes, appealImage: secure_url };
       // console.log("request.body:", request.body);
       // console.log("request.files:", request.files);
-
-      
     }
     const result = await appealModel.updateOne(
       { _id: request.params.id },
@@ -148,7 +153,6 @@ const allCampaigns = async (request: Request, response: Response) => {
     data: campaigns,
   });
 };
-
 
 const userAppeals = async (request: Request, response: Response) => {
   const appeals = await appealModel.find();
