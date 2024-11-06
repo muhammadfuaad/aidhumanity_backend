@@ -10,46 +10,46 @@ const appealSchema = new mongoose.Schema<Appeal>(
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      // required: true,
+      required: true,
     },
     description: {
       type: String,
-      // required: true,
+      required: true,
     },
     targeted_amount: {
       type: Number,
-      // required: true,
+      required: true,
     },
     collected_amount: {
       type: Number,
-      // required: true,
+      required: true,
     },
     image: {
       type: String,
-      // required: true,
+      required: true,
     },
     start_date: {
       type: Date,
-      // required: true,
+      required: true,
     },
     end_date: {
       type: Date,
-      // required: true,
+      required: true,
     },
     category: {
       type: String,
       enum: Object.values(Category),
-      // required: true,
+      required: true,
     },
     campaign: {
       type: String,
       enum: Object.values(Campaign),
-      // required: true,
+      required: true,
     },
     campaignImage: {
       type: String,
       enum: Object.values(CampaignImage),
-      // required: true,
+      required: true,
     },
     total_supporters: Number
   },

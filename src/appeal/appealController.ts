@@ -8,11 +8,11 @@ import { Campaign } from "./appealTypes";
 // import { request } from "node:http";
 
 const createAppeal = async (request: Request, response: Response) => {
-  console.log('campaign enum values:', Object.values(Campaign));
-  console.log('campaign enum keys:', Object.keys(Campaign));
+  // console.log('campaign enum values:', Object.values(Campaign));
+  // console.log('campaign enum keys:', Object.keys(Campaign));
+
   try {
-    const { title, description, targeted_amount, collected_amount, start_date, end_date, category, campaign,
-      total_supporters } = request.body;
+    const { title, description, targeted_amount, start_date, end_date, category, campaign } = request.body;
     // Log the request body and files to debug
     console.log("Request body:", request.body);
     console.log("Request files:", request.files);
@@ -30,8 +30,8 @@ const createAppeal = async (request: Request, response: Response) => {
     // If you want to create the appeal after the image is uploaded:
     // const { name, price, stock } = request.body;
     const newAppeal = await appealModel.create({
-      title, author: _request.userId, description, targeted_amount, collected_amount, image: (await secure_url) as string, 
-      start_date, end_date, category, campaign: campaignValue, campaignImage: campaignImageValue, total_supporters
+      title, author: _request.userId, description, targeted_amount, collected_amount: 0, image: (await secure_url) as string, 
+      start_date, end_date, category, campaign: campaignValue, campaignImage: campaignImageValue, total_supporters: 0
     });
 
     response.status(201).json({
@@ -137,7 +137,7 @@ const updateAppeal = async (
 
 const allAppeals = async (request: Request, response: Response) => {
   const appeals = await appealModel.find();
-  console.log("appeals:", appeals);
+  // console.log("appeals:", appeals);
   response.json({
     message: "Appeals fetched successfully",
     data: appeals,
@@ -146,7 +146,7 @@ const allAppeals = async (request: Request, response: Response) => {
 
 const allCampaigns = async (request: Request, response: Response) => {
   const appeals = await appealModel.find();
-  console.log("appeals:", appeals);
+  // console.log("appeals:", appeals);
   const campaigns = [...new Set(appeals.map((item) => item.campaign))];
   response.json({
     message: "Campaigns fetched successfully",
@@ -155,9 +155,12 @@ const allCampaigns = async (request: Request, response: Response) => {
 };
 
 const userAppeals = async (request: Request, response: Response) => {
-  const appeals = await appealModel.find();
-  console.log("appeals:", appeals);
-  response.json({
+  const _request = request as AuthRequest;
+  console.log("_request.userId:", _request.userId);
+  const userId =_request.userId
+  const appeals = await appealModel.find({author: userId});
+  // console.log("appeals:", appeals);
+  response.status(200).json({
     message: "Appeals fetched successfully",
     data: appeals,
   });
