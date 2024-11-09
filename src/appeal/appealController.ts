@@ -13,13 +13,16 @@ const createAppeal = async (request: Request, response: Response) => {
 
   try {
     const { title, description, targeted_amount, start_date, end_date, category, campaign } = request.body;
-    // Log the request body and files to debug
-    console.log("Request body:", request.body);
-    console.log("Request files:", request.files);
+    // console.log("request.body:", request.body);
+    // console.log("request.files:", request.files);
+
     const campaignValue = Campaign[campaign as keyof typeof Campaign];
     const campaignImageValue = CampaignImage[campaign as keyof typeof CampaignImage];
-    if (!campaignValue || !campaignImageValue) {
+    console.log('campaignValue:', campaignValue);
+    if (!campaignValue) {
       return response.status(400).json({ message: "Invalid campaign key" });
+    } else if (!campaignImageValue) {
+      return response.status(400).json({ message: "Invalid campaign image key" });
     }
 
     const secure_url = cloudinaryUpload(request.files);
