@@ -5,6 +5,7 @@ import { AuthRequest } from "../middlewares/authenticate";
 import cloudinaryUpload from "../utils/cloudinaryUpload";
 import { CampaignImage } from "./appealTypes";
 import { Campaign } from "./appealTypes";
+import { getKeyByValue } from "../utils/methods";
 // import { request } from "node:http";
 
 const createAppeal = async (request: Request, response: Response) => {
@@ -13,17 +14,18 @@ const createAppeal = async (request: Request, response: Response) => {
 
   try {
     const { title, description, targeted_amount, start_date, end_date, category, campaign } = request.body;
-    // console.log("request.body:", request.body);
+    const campaignKey = getKeyByValue(Campaign, campaign);
+    console.log("request.body:", request.body);
     // console.log("request.files:", request.files);
 
-    const campaignValue = Campaign[campaign as keyof typeof Campaign];
-    const campaignImageValue = CampaignImage[campaign as keyof typeof CampaignImage];
-    console.log('campaignValue:', campaignValue);
-    if (!campaignValue) {
-      return response.status(400).json({ message: "Invalid campaign key" });
-    } else if (!campaignImageValue) {
-      return response.status(400).json({ message: "Invalid campaign image key" });
-    }
+    // const campaignValue = Campaign[campaign as keyof typeof Campaign];
+    const campaignImageValue = CampaignImage[campaignKey as keyof typeof CampaignImage];
+    // console.log('campaignValue:', campaignValue);
+    // if (!campaignValue) {
+    //   return response.status(400).json({ message: "Invalid campaign key" });
+    // } else if (!campaignImageValue) {
+    //   return response.status(400).json({ message: "Invalid campaign image key" });
+    // }
 
     const secure_url = cloudinaryUpload(request.files);
 
@@ -34,7 +36,7 @@ const createAppeal = async (request: Request, response: Response) => {
     // const { name, price, stock } = request.body;
     const newAppeal = await appealModel.create({
       title, author: _request.userId, description, targeted_amount, collected_amount: 0, image: (await secure_url) as string, 
-      start_date, end_date, category, campaign: campaignValue, campaignImage: campaignImageValue, total_supporters: 0
+      start_date, end_date, campaign, campaignImage: campaignImageValue, category, total_supporters: 0
     });
 
     response.status(201).json({
@@ -148,12 +150,12 @@ const allAppeals = async (request: Request, response: Response) => {
 };
 
 const allCampaigns = async (request: Request, response: Response) => {
-  const appeals = await appealModel.find();
-  // console.log("appeals:", appeals);
-  const campaigns = [...new Set(appeals.map((item) => item.campaign))];
+  // const campaigns = [...new Set(appeals.map((item) => item.campaign ? item.campaign : null))];
   response.json({
     message: "Campaigns fetched successfully",
-    data: campaigns,
+    campaigns: Object.values(Campaign),
+    // question
+    // appeals
   });
 };
 
