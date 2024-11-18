@@ -17,7 +17,7 @@ const authenticate = (request: Request, response: Response, next: NextFunction) 
     const parsedToken = token.split(' ')[1]
 
     const decoded = verify(parsedToken, config.jwtSecret as string)
-    console.log('decoded:', decoded);
+    // console.log('decoded:', decoded);
     const _request = request as AuthRequest
     _request.userId = decoded.sub as string
     next()

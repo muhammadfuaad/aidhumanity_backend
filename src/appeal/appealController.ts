@@ -55,25 +55,29 @@ const createAppeal = async (request: Request, response: Response) => {
 
 const deleteAppeal = async (request: Request, response: Response, next: NextFunction) => {
   const _request = request as AuthRequest;
-  console.log("_request.userId:", _request.userId);
+  // console.log("_request.userId:", _request.userId);
 
   try {
     const appeal = await appealModel.findOne({ _id: request.params.id });
+    console.log('appeal:', appeal);
+    // console.log('appeal.author:', appeal.author);
 
-    if (!appeal) {
-      return response.status(404).json({ message: "Appeal not found" });
-    }
-    if (appeal.author.toString() !== _request.userId) {
+    if (appeal === null) {
+      return next(createHttpError(404, "Appeal not found"));
+    } else if (appeal.author.toString() !== _request.userId) {
       return next(createHttpError(403, "You can't delete other's appeals"));
+    } else if (Object.keys(appeal).length > 1) {
+      const result = await appealModel.deleteOne({ _id: request.params.id });
+
+      response.status(200).json({
+        message: "Appeal deleted successfully",
+        deletedAppeal: appeal,
+        result,
+      });
+
     }
 
-    const result = await appealModel.deleteOne({ _id: request.params.id });
-
-    response.json({
-      message: "Appeal deleted successfully",
-      deletedAppeal: appeal,
-      result,
-    });
+    
   } catch (error) {
     console.error("Error deleting appeal:", error);
     response.status(500).json({
@@ -179,10 +183,10 @@ const getSingleAppeal = async (
   console.log('request:', request);
   console.log("request.params:", request.params);
   const { appealId } = request.params;
-  console.log("appealId:", appealId);
+  // console.log("appealId:", appealId);
 
   try {
-    const appeal = await appealModel.findOne({ _id: appealId });
+    const appeal = await appealModel.findOne({ _id: appealId }).populate("author");
     console.log("appeal:", appeal);
 
     if (!appeal) {

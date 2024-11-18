@@ -13,8 +13,8 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9); // Generate a unique suffix
     const ext = path.extname(file.originalname); // Extract the file extension
-    console.log('ext:', ext);
-    console.log('path:', path);
+    // console.log('ext:', ext);
+    // console.log('path:', path);
     
     cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`); // Set the filename (e.g., appealImage-1627319123723.jpg)
   }

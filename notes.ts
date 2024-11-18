@@ -1,57 +1,9 @@
-// appealTypes.ts:
+// access token for usman@gmail.com:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzFiY2I4ZGY3YmY3ZjZlYzViODZjMWEiLCJpYXQiOjE3MzExNzExMzIsImV4cCI6MTczMTc3NTkzMn0.nDrb73p3qc6BuJgR49-nuscuDWZsFs6B7Ot6_5etWKk
 
-export enum Campaign {
-  E = "Eid",
-  R = "Ramadan",
-  HA = "Hunger Appeal"
-}
+// access token for fuaad@gmail.com:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzFhNzcwZGE3MjVjZTM3MDUwZWU3MTAiLCJpYXQiOjE3MzEzMTE0ODMsImV4cCI6MTczMTkxNjI4M30.4qb-3v9TQA7YbO4LMkuDrRSXlthxvidoyWx7be9vu-A
 
-export interface Appeal {
-  _id: string;
-  title: string;
-  campaign: Campaign;
-}
 
-// appealModel.ts:
 
-const appealSchema = new mongoose.Schema<Appeal>(
-  {
-    title: {
-      type: String,
-      required: true,
-    },
-    campaign: {
-      type: String,
-      enum: Object.values(Campaign),
-      // required: true,
-    },
-  },
-  { timestamps: true }
-);
 
-export default mongoose.model<Appeal>('Appeal', appealSchema)
-
-// appealController.ts:
-const createAppeal = async (request: Request, response: Response) => {
-  try {
-    const { title, campaign} = request.body;
-    // Log the request body and files to debug
-    console.log("Request body:", request.body);
-    console.log("Request files:", request.files);
-
-    const newAppeal = await appealModel.create({
-      title, campaign
-    });
-
-    response.status(201).json({
-      message: "Appeal created successfully",
-      data: newAppeal,
-    });
-  } catch (error) {
-    console.error("Error creating appeal:", error);
-    response.status(500).json({
-      message: "Error creating appeal",
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-  }
-};
