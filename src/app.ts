@@ -4,9 +4,13 @@ import userRouter from "./user/userRouter";
 import productRouter from "./product/productRouter";
 import appealRouter from "./appeal/appealRouter";
 import cors from "cors";
+import { googleAuth, googleAuthCallback } from "./user/socialSignUpController";
+import passport from "passport"
 
 const app = express();
 app.use(express.json());
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Set up CORS options
 const corsOptions = {
@@ -17,6 +21,8 @@ const corsOptions = {
 
 // Apply CORS middleware with options
 app.use(cors(corsOptions));
+app.get('/auth/google', googleAuth)
+app.get('/auth/google/callback', googleAuthCallback)
 
 // Routes
 app.use("/api/user", userRouter);

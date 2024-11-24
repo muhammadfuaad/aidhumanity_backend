@@ -8,7 +8,10 @@ const _config = {
   jwtSecret: process.env.JWT_SECRET,
   cloudinaryName: process.env.CLOUDINARY_NAME,
   cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
-  cloudinarySecret: process.env.CLOUDINARY_API_SECRET
+  cloudinarySecret: process.env.CLOUDINARY_API_SECRET,
+  linkedinClientId: process.env.LINKEDIN_CLIENT_ID,
+  linkedinClientSecret: process.env.LINKEDIN_CLIENT_SECRET
+
 }
 
 export const config = Object.freeze(_config);
