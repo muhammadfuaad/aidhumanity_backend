@@ -6,11 +6,18 @@ import appealRouter from "./appeal/appealRouter";
 import cors from "cors";
 import { googleAuth, googleAuthCallback } from "./user/socialSignUpController";
 import passport from "passport"
+import session from 'express-session'
 
 const app = express();
 app.use(express.json());
+app.use(session({ 
+  secret: 'Enter your secret key',
+  resave: true,
+  saveUninitialized: true
+}));
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 // Set up CORS options
 const corsOptions = {

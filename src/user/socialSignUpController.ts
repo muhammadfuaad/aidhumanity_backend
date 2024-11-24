@@ -1,49 +1,101 @@
-// const GoogleStrategy = require('passport-google-oauth20').Strategy;
-import GoogleStrategy from 'passport-google-oauth20'
-import LinkedInStrategy from 'passport-linkedin-oauth2';
-import {config} from '../config//config'
-import passport from 'passport';
+import { Strategy as LinkedInStrategy, Profile as LinkedInProfile } from 'passport-linkedin-oauth2';
+// Uncomment the following line if you plan to use Google Strategy later
+// import { Strategy as GoogleStrategy, Profile as GoogleProfile } from 'passport-google-oauth20';
+import { config } from '../config/config';
+import passport, { AuthenticateOptions } from 'passport';
+import { Request, Response, NextFunction } from 'express';
 
-// google signup
-// passport.use(new GoogleStrategy({
-//     clientID: GOOGLE_CLIENT_ID,
-//     clientSecret: GOOGLE_CLIENT_SECRET,
-//     callbackURL: "http://www.example.com/auth/google/callback"
+// Google authentication (Commented out as per your original code)
+// passport.use(new GoogleStrategy(
+//   {
+//     clientID: config.googleClientId as string,
+//     clientSecret: config.googleClientSecret as string,
+//     callbackURL: "http://www.example.com/auth/google/callback",
 //   },
-//   function(accessToken, refreshToken, profile, cb) {
-//     User.findOrCreate({ googleId: profile.id }, function (err, user) {
-//       return cb(err, user);
-//     });
+//   async (accessToken: string, refreshToken: string, profile: GoogleProfile, done: (err: any, user?: any) => void) => {
+//     try {
+//       // Replace with actual database logic
+//       const user = await User.findOrCreate({ googleId: profile.id });
+//       done(null, user);
+//     } catch (err) {
+//       done(err);
+//     }
 //   }
 // ));
 
+// Google Authentication Methods
+export const googleAuth = (): AuthenticateOptions => {
+  return passport.authenticate('google', { scope: ['profile'] });
+};
 
-// export const googleAuth = () => {
-//   passport.authenticate('google', { scope: ['profile'] })
-// }
+export const googleAuthCallback = (): void => {
+  passport.authenticate('google', { failureRedirect: '/login' }),
+    (req: Request, res: Response) => {
+      res.redirect('/');
+    };
+};
 
-// export const googleAuthCallback = () => {
-//   passport.authenticate('google', { failureRedirect: '/login' }),
-//   function(req, res) {
-//     res.redirect('/');
-//   });
-// }
+// LinkedIn Signup Strategy
+passport.use(
+  new LinkedInStrategy(
+    {
+      clientID: config.linkedinClientId as string,
+      clientSecret: config.linkedinClientSecret as string,
+      callbackURL: 'http://127.0.0.1:3000/auth/linkedin/callback',
+      scope: ['r_emailaddress', 'r_liteprofile'],
+    },
+    (
+      accessToken: string,
+      refreshToken: string,
+      profile: LinkedInProfile,
+      done: (err: any, user?: any) => void
+    ) => {
+      console.log('LinkedIn profile:', profile);
 
-// linkedin signup
+      process.nextTick(() => {
+        try {
+          // Replace with actual database logic
+          const user = {
+            id: profile.id,
+            displayName: profile.displayName,
+            emails: profile.emails,
+          };
+          return done(null, user);
+        } catch (err) {
+          return done(err);
+        }
+      });
+    }
+  )
+);
 
-passport.use(new LinkedInStrategy({
-  clientID: config.linkedinClientId,
-  clientSecret: config.linkedinClientSecret,
-  callbackURL: "http://127.0.0.1:3000/auth/linkedin/callback",
-  scope: ['r_emailaddress', 'r_liteprofile'],
-}, function(accessToken, refreshToken, profile, done) {
-  // asynchronous verification, for effect...
-  process.nextTick(function () {
-    // To keep the example simple, the user's LinkedIn profile is returned to
-    // represent the logged-in user. In a typical application, you would want
-    // to associate the LinkedIn account with a user record in your database,
-    // and return that user instead.
-    return done(null, profile);
-  });
-}));
-  
+// LinkedIn Authentication Methods
+export const linkedinAuth = () => {
+  return passport.authenticate('linkedin', { state: 'SOME STATE' }); // `state` is optional but recommended for security
+};
+
+export const linkedinAuthCallback = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  passport.authenticate('linkedin', { failureRedirect: '/login' }, (err, user, info) => {
+    if (err) {
+      console.error('LinkedIn authentication error:', err);
+      return res.status(500).json({ error: 'Authentication failed' });
+    }
+    if (!user) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    // Success: You can issue a token here or establish a session
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        console.error('Login error:', loginErr);
+        return res.status(500).json({ error: 'Login failed' });
+      }
+      // Redirect or respond with user data
+      return res.redirect('/dashboard'); // Adjust redirect path as needed
+    });
+  })(req, res, next);
+};
